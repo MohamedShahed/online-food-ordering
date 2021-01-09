@@ -14,7 +14,7 @@ import CustomErrors.WrongCredentialsException;
 public class DatabaseAccess {
     private final String databaseName = "online_food_ordering";
     private final String user = "root";
-    private final String password = "Shahed,,  10";
+    private final String password = "";
     private Connection connect = null;
     private Statement statement = null;
 
