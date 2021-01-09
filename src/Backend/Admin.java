@@ -65,7 +65,7 @@ public class Admin extends Person {
         System.out.println("enter 5 for add a new product");
         System.out.println("enter 6 for remove a specific product");
         System.out.println("enter 7 for update a specific product details");
-        System.out.println("enter 8 for viewing specific product details ");
+        System.out.println("enter 8 for view products  ");
         System.out.println("enter 9 for logout ");
         return validateAdminChoice();
     }

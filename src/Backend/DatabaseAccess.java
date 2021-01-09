@@ -39,19 +39,21 @@ public class DatabaseAccess {
             throw new InternalServerException();
         }
     }
-    public Customer registerUser(String username, String pass, String email) throws InternalServerException, UsernameExistsException {
+    public boolean registerUser(String username, String pass, String email, String uAddress, String Pnumber) throws InternalServerException, UsernameExistsException {
         if (userExists(username)) {
             throw new UsernameExistsException();
         }
 
         try {
-            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (Uname, Uemail, password) VALUES (?, ?, ?)");
+            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (Uname, Uemail, password, Uaddress, UphoneNumber) VALUES (?, ?, ?, ?, ?)");
             insertUser.setString(1, username);
             insertUser.setString(2, email);
             insertUser.setString(3, pass);
+            insertUser.setString(4, uAddress);
+            insertUser.setString(5, Pnumber);
             insertUser.executeUpdate();
 
-            return new Customer(username, email);
+            return true;
         } catch (SQLException e) {
             throw new InternalServerException();
         }

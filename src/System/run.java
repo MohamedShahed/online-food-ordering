@@ -31,7 +31,7 @@ public class run {
         while(true)
         {
             choice=sc.nextInt();
-            if(choice==1 | choice ==2 | choice ==3){
+            if(choice==1 | choice ==2 | choice ==3| choice ==4| choice ==5){
                 return choice;
             }
             else {
@@ -46,10 +46,12 @@ public class run {
         Scanner sc=new Scanner(System.in);
         int choice=0;
         while(status){
-            System.out.println("--------------Login----------");
-            System.out.println("enter 1 for admin");
-            System.out.println("enter 2 for user");
-            System.out.println("enter 3 for delivery boy");
+            System.out.println("--------------Welcome----------");
+            System.out.println("enter 1 for admin login");
+            System.out.println("enter 2 for user  login");
+            System.out.println("enter 3 for delivery boy login");
+            System.out.println("enter 4 for user registration");
+            System.out.println("enter 5 to Exit");
 
             choice=getLoginChoice();
             if(choice==1){
@@ -83,8 +85,8 @@ public class run {
                         Item newItem=Item.creatNewItem();
                         admin.updateProductDetails(db, id, newItem);
                     }
-                    //todo مش عارف ازاي الصراحه
                     else if(adminChoice==8){
+                        db.showAllItems();
                     }
                     else break;
 
@@ -99,6 +101,20 @@ public class run {
                 Customer user=db.loginUser(Uname, Upass);
 
             }
+            else if(choice==3){
+                //todo delivery boy
+            }
+            else if(choice==4){
+                //todo user register
+                System.out.print("enter ur name: ");String name=sc.nextLine();System.out.println();
+                System.out.print("enter ur email: ");String email=sc.next();System.out.println();
+                System.out.print("enter ur password: ");String password=sc.next();System.out.println();
+                System.out.print("enter ur phone number: ");String PhoneNumber=sc.next();System.out.println();sc.nextLine();
+                System.out.print("enter ur Address: ");String address=sc.nextLine();System.out.println();
+                if(db.registerUser(name, password, email, address, PhoneNumber))
+                    System.out.println("the registration process done successfully");
+            }
+            else break;
         }
     }
 }

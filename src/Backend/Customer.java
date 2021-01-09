@@ -10,6 +10,7 @@ public class Customer extends Person {
     private ArrayList<Item> cart = new Order().getOrderList();
 
 
+
     public Customer(String name, String email) {
         super(name, email);
     }
