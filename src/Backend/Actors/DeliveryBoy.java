@@ -1,13 +1,12 @@
 package Backend.Actors;
 
-import Backend.Actors.Person;
 import Backend.DatabaseAccess;
 
 import java.util.Scanner;
 
 public class DeliveryBoy extends Person {
     private DatabaseAccess db=new DatabaseAccess();
-    private int id=db.getMaxDboyId();
+    private int id=db.getMaxDeliveryBoyId();
 
     public DeliveryBoy(String username, String email, String password) throws Exception {
         super(username, email);

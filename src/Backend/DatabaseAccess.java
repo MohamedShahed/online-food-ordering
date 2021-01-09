@@ -210,7 +210,7 @@ public class DatabaseAccess {
     }
 
     /***Dboy***/
-    public  int getMaxDboyId() throws InternalServerException {
+    public  int getMaxDeliveryBoyId() throws InternalServerException {
         try {
             PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from deliveryBoy");
             ResultSet result = getItemQuery.executeQuery();
@@ -223,20 +223,40 @@ public class DatabaseAccess {
     }
     public void addNewDeliveryBoy(DeliveryBoy Dboy) throws InternalServerException {
         try {
-            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, email, password, order_id) VALUES (?, ?, ?, ?)");
+            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id) VALUES (?, ?, ?, ?, ?)");
             insertItem.setInt(1, Dboy.getId());
-            insertItem.setString(2, Dboy.getEmail());
-            insertItem.setString(3, Dboy.getPassword());
-            insertItem.setInt(4, 0);
+            insertItem.setString(2, Dboy.getName());
+            insertItem.setString(3, Dboy.getEmail());
+            insertItem.setString(4, Dboy.getPassword());
+            insertItem.setInt(5, 0);
             insertItem.executeUpdate();
             System.out.println("the process done successfully");
         } catch (SQLException e) {
             throw new InternalServerException();
         }
     }
+    public void showAllDeliveryBoy() throws InternalServerException {
+        try{
+            PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM deliveryBoy ");
+            ResultSet result = loginQuery.executeQuery();
+            System.out.println("id  " + "name                   email");
+            while(result.next()){
+                System.out.println(result.getInt("id") +"   "+ result.getString("name")+ "         " +result.getString("email")+ "   ");
+            }
+        }catch(SQLException e){
+            throw  new InternalServerException();
+        }
+    }
 
 
+    public void removeDeliveryBoy(int id) throws InternalServerException {
+        try {
+            PreparedStatement deleteItem = connect.prepareStatement("DELETE FROM deliveryBoy where id=?");
+            deleteItem.setInt(1, id);
+            deleteItem.executeUpdate();
 
-
-
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
 }

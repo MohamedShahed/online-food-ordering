@@ -67,7 +67,13 @@ public class run {
                         admin.addDeliveryBoy(db,dBoy);
 
                     }
-                    else if(adminChoice==2)admin.removeDeliveryBoy();
+                    else if(adminChoice==2)
+                    {
+                        db.showAllDeliveryBoy();
+                        System.out.println("enter delivery boy id: ");int id=sc.nextInt();
+                        admin.removeDeliveryBoy(db,id);
+
+                    }
                     else if(adminChoice==2)admin.updateDeliveryBoyDetails();
                     else if(adminChoice==4)admin.viewDeliveryBoyDetails();
                     else if(adminChoice==5){

@@ -3,6 +3,8 @@ package Backend.Actors;
 import Backend.DatabaseAccess;
 import Backend.Item;
 import CustomErrors.InternalServerException;
+
+import javax.xml.crypto.Data;
 import java.util.Scanner;
 
 public class Admin extends Person {
@@ -25,7 +27,9 @@ public class Admin extends Person {
     public void addDeliveryBoy(DatabaseAccess db, DeliveryBoy dboy) throws InternalServerException {
         db.addNewDeliveryBoy(dboy);
     }
-    public void removeDeliveryBoy(){}
+    public void removeDeliveryBoy(DatabaseAccess db, int id) throws InternalServerException {
+        db.removeDeliveryBoy(id);
+    }
     public void updateDeliveryBoyDetails(){}
     public void viewDeliveryBoyDetails(){}
     public static void addNewProduct(DatabaseAccess db, Item item) throws InternalServerException {
