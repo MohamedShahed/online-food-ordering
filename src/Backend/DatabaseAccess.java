@@ -4,6 +4,7 @@ import java.sql.*;
 
 import Backend.Actors.Admin;
 import Backend.Actors.Customer;
+import Backend.Actors.DeliveryBoy;
 import CustomErrors.InternalServerException;
 import CustomErrors.UserDoesNotExist;
 import CustomErrors.UsernameExistsException;
@@ -203,6 +204,32 @@ public class DatabaseAccess {
             result.first();
             return result.getInt(1);
 
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+
+    /***Dboy***/
+    public  int getMaxDboyId() throws InternalServerException {
+        try {
+            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from deliveryBoy");
+            ResultSet result = getItemQuery.executeQuery();
+            result.first();
+            return result.getInt(1);
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+    public void addNewDeliveryBoy(DeliveryBoy Dboy) throws InternalServerException {
+        try {
+            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, email, password, order_id) VALUES (?, ?, ?, ?)");
+            insertItem.setInt(1, Dboy.getId());
+            insertItem.setString(2, Dboy.getEmail());
+            insertItem.setString(3, Dboy.getPassword());
+            insertItem.setInt(4, 0);
+            insertItem.executeUpdate();
+            System.out.println("the process done successfully");
         } catch (SQLException e) {
             throw new InternalServerException();
         }

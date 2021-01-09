@@ -22,7 +22,9 @@ public class Admin extends Person {
         return this.email;
     }
 
-    public void addDeliveryBoy(){}
+    public void addDeliveryBoy(DatabaseAccess db, DeliveryBoy dboy) throws InternalServerException {
+        db.addNewDeliveryBoy(dboy);
+    }
     public void removeDeliveryBoy(){}
     public void updateDeliveryBoyDetails(){}
     public void viewDeliveryBoyDetails(){}

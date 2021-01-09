@@ -2,6 +2,7 @@ package System;
 
 import Backend.Actors.Admin;
 import Backend.Actors.Customer;
+import Backend.Actors.DeliveryBoy;
 import Backend.DatabaseAccess;
 import Backend.Item;
 
@@ -61,7 +62,11 @@ public class run {
                 int adminChoice;
                 while(true){
                     adminChoice=admin.adminMenu();
-                    if(adminChoice==1)admin.addDeliveryBoy();
+                    if(adminChoice==1){
+                        DeliveryBoy dBoy=DeliveryBoy.creatDboy();
+                        admin.addDeliveryBoy(db,dBoy);
+
+                    }
                     else if(adminChoice==2)admin.removeDeliveryBoy();
                     else if(adminChoice==2)admin.updateDeliveryBoyDetails();
                     else if(adminChoice==4)admin.viewDeliveryBoyDetails();
