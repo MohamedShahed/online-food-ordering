@@ -1,6 +1,8 @@
-package Backend;
+package Backend.Actors;
 
-import AbstractClasses.Person;
+import Backend.Actors.Person;
+import Backend.Item;
+import Backend.Order;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

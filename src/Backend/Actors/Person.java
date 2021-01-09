@@ -1,4 +1,4 @@
-package AbstractClasses;
+package Backend.Actors;
 
 public abstract class Person {
     protected String name;

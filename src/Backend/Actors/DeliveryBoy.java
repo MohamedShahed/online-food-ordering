@@ -1,6 +1,6 @@
-package Backend;
+package Backend.Actors;
 
-import AbstractClasses.Person;
+import Backend.Actors.Person;
 
 public class DeliveryBoy extends Person {
     public DeliveryBoy(String username, String email) {

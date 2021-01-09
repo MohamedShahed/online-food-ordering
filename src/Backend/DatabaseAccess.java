@@ -1,6 +1,9 @@
 package Backend;
 
 import java.sql.*;
+
+import Backend.Actors.Admin;
+import Backend.Actors.Customer;
 import CustomErrors.InternalServerException;
 import CustomErrors.UserDoesNotExist;
 import CustomErrors.UsernameExistsException;

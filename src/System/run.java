@@ -1,12 +1,9 @@
 package System;
 
-import Backend.Admin;
-import Backend.Customer;
+import Backend.Actors.Admin;
+import Backend.Actors.Customer;
 import Backend.DatabaseAccess;
 import Backend.Item;
-import CustomErrors.InternalServerException;
-import CustomErrors.UserDoesNotExist;
-import CustomErrors.WrongCredentialsException;
 
 import java.util.Scanner;
 

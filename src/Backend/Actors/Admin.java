@@ -1,6 +1,7 @@
-package Backend;
+package Backend.Actors;
 
-import AbstractClasses.Person;
+import Backend.DatabaseAccess;
+import Backend.Item;
 import CustomErrors.InternalServerException;
 import java.util.Scanner;
 
