@@ -19,7 +19,12 @@ public class Item {
         this.title=title;
         id++;
     }
-
+    Item(int id, String title, float price, int quantity) throws Exception {
+        this.id=id;
+        this.title=title;
+        this.price=price;
+        this.quantity=quantity;
+    }
     public static Item creatNewItem() throws Exception {
         String title;
         float price;

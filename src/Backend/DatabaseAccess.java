@@ -1,6 +1,7 @@
 package Backend;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import Backend.Actors.Admin;
 import Backend.Actors.Customer;
@@ -14,7 +15,7 @@ import CustomErrors.WrongCredentialsException;
 public class DatabaseAccess {
     private final String databaseName = "online_food_ordering";
     private final String user = "root";
-    private final String password = "";
+    private final String password = "Shahed,,  10";
     private Connection connect = null;
     private Statement statement = null;
 
@@ -166,6 +167,20 @@ public class DatabaseAccess {
             }
         }catch(SQLException e){
             throw  new InternalServerException();
+        }
+    }
+    public ArrayList<Item> getAllItems() throws Exception {
+        ArrayList<Item> items=new ArrayList<>();
+        try{
+            PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM items ");
+            ResultSet result = loginQuery.executeQuery();
+            while(result.next()){
+                items.add(new Item(result.getInt("id"),result.getString("title"),result.getFloat("price"), result.getInt("quantity")));
+
+            }
+            return items;
+        }catch(SQLException e){
+            throw  new Exception();
         }
     }
     public void updateItem(int breveId, Item item) throws InternalServerException {
