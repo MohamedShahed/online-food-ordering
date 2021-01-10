@@ -10,13 +10,16 @@ public class Item {
     private float price;
     private int quantity;
     private String title;
+    private String description;
+    private String evaluation;
 
 
-    Item(String title, float price, int quantity) throws Exception {
+    Item(String title, float price, int quantity, String description) throws Exception {
         this.title = title;
         this.price = price;
         this.quantity=quantity;
         this.title=title;
+        this.description=description;
         id++;
     }
     Item(int id, String title, float price, int quantity) throws Exception {
@@ -29,11 +32,13 @@ public class Item {
         String title;
         float price;
         int Q;
+        String description;
         Scanner sc=new Scanner(System.in);
         System.out.print("enter the item title: ");title=sc.nextLine();System.out.println();
         System.out.print("enter the item price: ");price=sc.nextFloat();System.out.println();
         System.out.print("enter the item quantity: ");Q=sc.nextInt();System.out.println();
-        return new Item(title, price, Q);
+        System.out.print("enter the item description: ");description=sc.next();System.out.println();
+        return new Item(title, price, Q, description);
 
     }
 
@@ -44,8 +49,10 @@ public class Item {
     public int getQuantity() {
         return quantity;
     }
-
+    public String getDescription(){return this.description;}
     public int getId(){return id;}
+    public String getEvaluation(){return this.evaluation;}
+    public void setEvaluation(String evaluation){this.evaluation=evaluation;}
 
 
     public void setTitle(String title){this.title=title;}

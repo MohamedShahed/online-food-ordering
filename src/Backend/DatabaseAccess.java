@@ -44,18 +44,19 @@ public class DatabaseAccess {
             throw new InternalServerException();
         }
     }
-    public boolean registerUser(String username, String pass, String email, String uAddress, String Pnumber) throws InternalServerException, UsernameExistsException {
-        if (userExists(username)) {
+    public boolean registerUser(Customer customer) throws InternalServerException, UsernameExistsException {
+        if (userExists(customer.getName())) {
             throw new UsernameExistsException();
         }
 
         try {
-            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (Uname, Uemail, password, Uaddress, UphoneNumber) VALUES (?, ?, ?, ?, ?)");
-            insertUser.setString(1, username);
-            insertUser.setString(2, email);
-            insertUser.setString(3, pass);
-            insertUser.setString(4, uAddress);
-            insertUser.setString(5, Pnumber);
+            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (Uid,Uname, Uemail, password, Uaddress, UphoneNumber) VALUES (?, ?, ?, ?, ?)");
+            insertUser.setInt(1, customer.getId());
+            insertUser.setString(2, customer.getName());
+            insertUser.setString(3, customer.getEmail());
+            insertUser.setString(4, customer.getPassword());
+            insertUser.setString(4, customer.getAddress());
+            insertUser.setString(5, customer.getPhoneNumber());
             insertUser.executeUpdate();
 
             return true;
@@ -75,9 +76,12 @@ public class DatabaseAccess {
             result.first();
             String dbPassword = result.getString("password");
             String email = result.getString("Uemail");
+            String Pnumber=result.getString("UphoneNumber");
+            String address=result.getString("Uaddress");
+            int id=result.getInt("Uid");
 
             if (dbPassword.equals(pass)) {
-                return new Customer(username, email);
+                return new Customer(id, username, email,address, Pnumber);
             } else {
                 throw new WrongCredentialsException();
             }
@@ -161,9 +165,11 @@ public class DatabaseAccess {
         try{
             PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM items ");
             ResultSet result = loginQuery.executeQuery();
-            System.out.println("id  " + "title                   " + "  price " + "  quantity");
+            int quantity=0;
             while(result.next()){
-                System.out.println(result.getInt("id") +"   "+ result.getString("title")+ "         " +result.getFloat("price")+ "   "+result.getInt("quantity"));
+                quantity=result.getInt("quantity");
+                if(quantity>0)
+                    System.out.println("id: "+result.getInt("id") +"   title:"+ result.getString("title")+ "   price: " +result.getFloat("price")+ "   quantity"+quantity);
             }
         }catch(SQLException e){
             throw  new InternalServerException();
@@ -172,8 +178,8 @@ public class DatabaseAccess {
     public ArrayList<Item> getAllItems() throws Exception {
         ArrayList<Item> items=new ArrayList<>();
         try{
-            PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM items ");
-            ResultSet result = loginQuery.executeQuery();
+            PreparedStatement Query = connect.prepareStatement("SELECT * FROM items ");
+            ResultSet result = Query.executeQuery();
             while(result.next()){
                 items.add(new Item(result.getInt("id"),result.getString("title"),result.getFloat("price"), result.getInt("quantity")));
 
@@ -183,12 +189,39 @@ public class DatabaseAccess {
             throw  new Exception();
         }
     }
-    public void updateItem(int breveId, Item item) throws InternalServerException {
+    public Item getBuyedItem(int id, int q) throws Exception {
+        Item item;
+        try{
+            PreparedStatement Query = connect.prepareStatement("SELECT * FROM items where id=?");
+            Query.setInt(1, id);
+            ResultSet result = Query.executeQuery();
+            int preQuantity=result.getInt("quantity");
+            item=new Item(result.getString("title"), result.getFloat("price"),q,result.getString("description"));
+            updateItem(id, new Item(result.getString("title"),result.getFloat("price"),preQuantity-q, result.getString("title")));
+            return item;
+        }catch(SQLException e){
+            throw  new Exception();
+        }
+    }
+    public Item getItem(int id) throws Exception {
+        try{
+            PreparedStatement Query = connect.prepareStatement("SELECT * FROM items where id=?");
+            Query.setInt(1, id);
+            ResultSet result = Query.executeQuery();
+            return new Item(result.getString("title"), result.getFloat("price"),result.getInt("quantity"),result.getString("description"));
+
+        }catch(SQLException e){
+            throw  new Exception();
+        }
+    }
+    public void updateItem(int id, Item item) throws InternalServerException {
         try {
-            PreparedStatement updateItem = connect.prepareStatement("delete FROM items where id=?");
-            updateItem.setInt(1, breveId);
-            updateItem.executeUpdate();
-            addNewItem(item);
+            PreparedStatement updateItem = connect.prepareStatement("update items set title=?, price=?, quantity=? where id=?");
+            updateItem.setString(1, item.getTitle());
+            updateItem.setFloat(2, item.getPrice());
+            updateItem.setFloat(3, item.getQuantity());
+            updateItem.setInt(4, id);
+            ResultSet result = updateItem.executeQuery();
 
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -203,10 +236,28 @@ public class DatabaseAccess {
             result.first();
             String dbTitle = result.getString("title");
             String dbPrice = result.getString("price");
-            String dbQuantity = result.getString("quantity");
+            int dbQuantity = result.getInt("quantity");
 
+            if(dbQuantity>0)
+            {
             System.out.println("Title"+ "   " + "Price "+ "   ");
             System.out.println(dbTitle+"    "+dbPrice+ "    "+ dbQuantity);
+            }
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+    public void creatOrder(Order order)throws  InternalServerException{
+        try {
+            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO orders (id, customer_id, duration, customerNotes, PaymentType, total_price,items) VALUES (?, ?, ?, ?, ?, ?)");
+            insertItem.setInt(1, order.getId());
+            insertItem.setInt(2, order.getCustomer_id());
+            insertItem.setString(3, order.getDuration());
+            insertItem.setString(4, order.getCustomerNotes());
+            insertItem.setString(5, order.getPaymentType());
+            insertItem.setString(6, order.getOrderList());
+            insertItem.executeUpdate();
 
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -215,6 +266,17 @@ public class DatabaseAccess {
     public  int getMaxItemId() throws InternalServerException {
         try {
             PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from items");
+            ResultSet result = getItemQuery.executeQuery();
+            result.first();
+            return result.getInt(1);
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+    public  int getMaxUserId() throws InternalServerException {
+        try {
+            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from customers");
             ResultSet result = getItemQuery.executeQuery();
             result.first();
             return result.getInt(1);
@@ -238,12 +300,13 @@ public class DatabaseAccess {
     }
     public void addNewDeliveryBoy(DeliveryBoy Dboy) throws InternalServerException {
         try {
-            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id) VALUES (?, ?, ?, ?, ?)");
+            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id, branch) VALUES (?, ?, ?, ?, ?, ?)");
             insertItem.setInt(1, Dboy.getId());
             insertItem.setString(2, Dboy.getName());
             insertItem.setString(3, Dboy.getEmail());
             insertItem.setString(4, Dboy.getPassword());
             insertItem.setInt(5, 0);
+            insertItem.setString(6, Dboy.getBranch());
             insertItem.executeUpdate();
             System.out.println("the process done successfully");
         } catch (SQLException e) {
@@ -269,6 +332,46 @@ public class DatabaseAccess {
             PreparedStatement deleteItem = connect.prepareStatement("DELETE FROM deliveryBoy where id=?");
             deleteItem.setInt(1, id);
             deleteItem.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+    public void updateDeliveryBoy(int id, DeliveryBoy DBoy) throws InternalServerException {
+        try {
+            PreparedStatement updateDBoy = connect.prepareStatement("update deliveryBoy set order_id=?, name=?, email=?, password=?, branch=?, vehicleType=? where id=?");
+            updateDBoy.setInt(1, DBoy.getOrderId());
+            updateDBoy.setString(2, DBoy.getName());
+            updateDBoy.setString(3, DBoy.getEmail());
+            updateDBoy.setString(4, DBoy.getPassword());
+            updateDBoy.setString(5, DBoy.getBranch());
+            updateDBoy.setString(6, DBoy.getVehicleType());
+            updateDBoy.setInt(7, DBoy.getId());
+            ResultSet result = updateDBoy.executeQuery();
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
+    public void viewDboy(int id) throws InternalServerException{
+        try {
+            PreparedStatement getboyQuery = connect.prepareStatement("SELECT * FROM deliveryBoy WHERE id=?");
+            getboyQuery.setInt(1, id);
+            ResultSet result = getboyQuery.executeQuery();
+            result.first();
+            String name = result.getString("name");
+            String email = result.getString("email");
+            String password=result.getString("password");
+            String branch=result.getString("branch");
+            String Vtype=result.getString("vehicleType");
+            int weekWorkHours=result.getInt("weekWorkHours");
+
+            System.out.println("name:"+name);
+            System.out.println("email:"+email);
+            System.out.println("password: "+password);
+            System.out.println("branch: "+branch);
+            System.out.println("vehicle Type: "+Vtype);
+            System.out.println("week Work Hours: "+ weekWorkHours);
 
         } catch (SQLException e) {
             throw new InternalServerException();

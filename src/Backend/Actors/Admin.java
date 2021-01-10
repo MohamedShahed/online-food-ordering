@@ -30,8 +30,12 @@ public class Admin extends Person {
     public void removeDeliveryBoy(DatabaseAccess db, int id) throws InternalServerException {
         db.removeDeliveryBoy(id);
     }
-    public void updateDeliveryBoyDetails(){}
-    public void viewDeliveryBoyDetails(){}
+    public void updateDeliveryBoyDetails(DatabaseAccess db, int id, DeliveryBoy boy) throws InternalServerException {
+        db.updateDeliveryBoy(id, boy);
+    }
+    public void viewDeliveryBoyDetails(DatabaseAccess db, int id) throws InternalServerException {
+        db.viewDboy(id);
+    }
     public static void addNewProduct(DatabaseAccess db, Item item) throws InternalServerException {
         db.addNewItem(item);
     }
