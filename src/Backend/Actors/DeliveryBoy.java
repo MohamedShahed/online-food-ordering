@@ -14,6 +14,7 @@ public class DeliveryBoy extends Person {
     private String evaluation;
     private String vehicleType;
     private float weekWorkHours;
+    private static Scanner sc=new Scanner(System.in);
 
     private int OrderId;
 
@@ -37,9 +38,8 @@ public class DeliveryBoy extends Person {
         this.vehicleType=Vtype;
 
     }
-
+    /**this for updating method*/
     public static DeliveryBoy creatDboy(int id) throws Exception {
-        Scanner sc=new Scanner(System.in);
         System.out.println("enter new name: ");String name=sc.next();
         System.out.println("enter new email: ");String email=sc.next();
         System.out.println("enter new password: ");String password=sc.next();
@@ -49,13 +49,12 @@ public class DeliveryBoy extends Person {
         return new DeliveryBoy(id, name, email, password, branch, weekWHours, Vtype);
     }
     public static DeliveryBoy creatDboy() throws Exception {
-        Scanner sc=new Scanner(System.in);
-        System.out.println("enter new name: ");String name=sc.next();
-        System.out.println("enter new email: ");String email=sc.next();
-        System.out.println("enter new password: ");String password=sc.next();
-        System.out.println("enter new branch: ");String branch=sc.next();
-        System.out.println("enter new weekWorkHours");float weekWHours=sc.nextFloat();
-        System.out.println("enter new vehicleType: ");String Vtype=sc.next();
+        System.out.println("enter his name: ");String name=sc.next();
+        System.out.println("enter his email: ");String email=sc.next();
+        System.out.println("enter his password: ");String password=sc.next();
+        System.out.println("enter his branch: ");String branch=sc.next();
+        System.out.println("enter his week Work Hours");float weekWHours=sc.nextFloat();
+        System.out.println("enter his vehicleType: ");String Vtype=sc.next();
         return new DeliveryBoy(name, email, password, branch, weekWHours, Vtype);
     }
     @Override
@@ -66,7 +65,7 @@ public class DeliveryBoy extends Person {
     public String getPassword(){return password;}
     public int getOrderId(){return this.OrderId;}
     public String getVehicleType(){return this.vehicleType;}
-
+    public float getWeekWorkHours(){return this.weekWorkHours;}
     @Override
     public String getEmail() {
         return this.email;

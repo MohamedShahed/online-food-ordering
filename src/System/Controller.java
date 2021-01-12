@@ -11,22 +11,13 @@ import java.util.Scanner;
 
 public class Controller {
 
-    private static DatabaseAccess db;
-
-    static {
-        try {
-            db = new DatabaseAccess();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    private  DatabaseAccess db;
     public Controller() throws Exception {
         {
-            boolean status=true;
+            db=new DatabaseAccess();
             Scanner sc=new Scanner(System.in);
             int choice=0;
-            while(status){
+            while(true){
                 System.out.println("--------------Welcome----------");
                 System.out.println("enter 1 for admin login");
                 System.out.println("enter 2 for user  login");
@@ -35,7 +26,7 @@ public class Controller {
                 System.out.println("enter 5 to Exit");
 
                 choice=getLoginChoice();
-                if(choice==1){
+                if(choice==1){    /**Admin*/
                     //Todo validate the input data
                     System.out.print("enter ur user name: ");
                     String Uname=sc.next();
@@ -90,11 +81,11 @@ public class Controller {
                         else if(adminChoice==8){ /**8 for view all products */
                             db.showAllItems();
                         }
-                        else break;
+                        else break; /**logout*/
 
                     }
                 }
-                else if(choice==2){
+                else if(choice==2){   /**Customer*/
                     //Todo validate the input data
                     System.out.print("enter ur user name: ");
                     String Uname=sc.next();
@@ -121,6 +112,7 @@ public class Controller {
                                 }
                                 else {
                                     customer.creatOrder(new Order());
+                                    break;
                                 }
                             }
                         }

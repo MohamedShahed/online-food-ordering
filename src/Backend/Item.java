@@ -36,8 +36,8 @@ public class Item {
         Scanner sc=new Scanner(System.in);
         System.out.print("enter the item title: ");title=sc.nextLine();System.out.println();
         System.out.print("enter the item price: ");price=sc.nextFloat();System.out.println();
-        System.out.print("enter the item quantity: ");Q=sc.nextInt();System.out.println();
-        System.out.print("enter the item description: ");description=sc.next();System.out.println();
+        System.out.print("enter the item quantity: ");Q=sc.nextInt();System.out.println();sc.nextLine();
+        System.out.print("enter the item description: ");description=sc.nextLine();System.out.println();
         return new Item(title, price, Q, description);
 
     }

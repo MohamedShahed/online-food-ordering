@@ -48,11 +48,6 @@ public class Admin extends Person {
     public static void viewProductDetails(DatabaseAccess db, int id) throws InternalServerException {
         db.viewItem(id);
     }
-    public static void main(String arg[]) throws Exception {
-        DatabaseAccess db=new DatabaseAccess();
-        Admin.viewProductDetails(db, 2);
-
-    }
 
     private int validateAdminChoice(){
         Scanner sc=new Scanner(System.in);

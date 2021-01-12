@@ -16,24 +16,17 @@ public class Customer extends Person {
     private String password;
 
     private ArrayList<Item> cart=new ArrayList<>(0);
-    private DatabaseAccess db;
+    private DatabaseAccess db=new DatabaseAccess();;
 
-    {
-        try {
-            db = new DatabaseAccess();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private int id=db.getMaxUserId();
 
-    public Customer(int id, String name, String email,String address, String phoneNumber) throws InternalServerException {
+    public Customer(int id, String name, String email,String address, String phoneNumber) throws Exception {
         super(name, email);
         this.address=address;
         this.phoneNumber=phoneNumber;
     }
-    public Customer(String name, String email,String address, String phoneNumber, String password) throws InternalServerException {
+    public Customer(String name, String email,String address, String phoneNumber, String password) throws Exception {
         super(name, email);
         this.address=address;
         this.phoneNumber=phoneNumber;

@@ -19,9 +19,5 @@ public class Menu {
             System.out.println("id: "+items.get(i).getId()+ "       title:"+items.get(i).getTitle()+"     price:"+items.get(i).getPrice()+"   quantity:"+items.get(i).getQuantity());
         }
     }
-    public static void main(String arg[]) throws Exception {
-        Menu m=new Menu();
-        m.showMenu();
 
-    }
 }

@@ -64,7 +64,7 @@ public class DatabaseAccess {
             throw new InternalServerException();
         }
     }
-    public Customer loginUser(String username, String pass) throws UserDoesNotExist, InternalServerException, WrongCredentialsException {
+    public Customer loginUser(String username, String pass) throws Exception {
         if (!userExists(username)) {
             throw new UserDoesNotExist();
         }
@@ -126,24 +126,15 @@ public class DatabaseAccess {
             throw new InternalServerException();
         }
     }
-    public static void main(String arg[]) throws Exception {
-        DatabaseAccess db=new DatabaseAccess();
-        String name="shahed";
-        String email="m.elshahed@gmail.com";
-        String password="20160214";
-
-        Admin cus=db.loginAdmin(name, password);
-        System.out.println(cus.getName());
-
-    }
 
     public void addNewItem(Item item) throws InternalServerException {
         try {
-            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO items (id, title, price, quantity) VALUES (?, ?, ?, ?)");
+            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO items (id, title, price, quantity, description) VALUES (?, ?, ?, ?, ?)");
             insertItem.setInt(1, item.getId());
             insertItem.setString(2, item.getTitle());
             insertItem.setFloat(3, item.getPrice());
             insertItem.setInt(4, item.getQuantity());
+            insertItem.setString(5, item.getDescription());
             insertItem.executeUpdate();
 
         } catch (SQLException e) {
@@ -169,7 +160,7 @@ public class DatabaseAccess {
             while(result.next()){
                 quantity=result.getInt("quantity");
                 if(quantity>0)
-                    System.out.println("id: "+result.getInt("id") +"   title:"+ result.getString("title")+ "   price: " +result.getFloat("price")+ "   quantity"+quantity);
+                    System.out.println("id: "+result.getInt("id") +"   title:"+ result.getString("title")+ "   price: " +result.getFloat("price")+ "   quantity"+quantity+"    description  "+result.getString("description"));
             }
         }catch(SQLException e){
             throw  new InternalServerException();
@@ -190,15 +181,13 @@ public class DatabaseAccess {
         }
     }
     public Item getBuyedItem(int id, int q) throws Exception {
-        Item item;
         try{
             PreparedStatement Query = connect.prepareStatement("SELECT * FROM items where id=?");
             Query.setInt(1, id);
             ResultSet result = Query.executeQuery();
             int preQuantity=result.getInt("quantity");
-            item=new Item(result.getString("title"), result.getFloat("price"),q,result.getString("description"));
-            updateItem(id, new Item(result.getString("title"),result.getFloat("price"),preQuantity-q, result.getString("title")));
-            return item;
+            updateItem(id, new Item(result.getString("title"),result.getFloat("price"),preQuantity-q, result.getString("description")));
+            return new Item(result.getString("title"), result.getFloat("price"),q,result.getString("description"));
         }catch(SQLException e){
             throw  new Exception();
         }
@@ -221,7 +210,7 @@ public class DatabaseAccess {
             updateItem.setFloat(2, item.getPrice());
             updateItem.setFloat(3, item.getQuantity());
             updateItem.setInt(4, id);
-            ResultSet result = updateItem.executeQuery();
+            updateItem.executeUpdate();
 
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -276,7 +265,7 @@ public class DatabaseAccess {
     }
     public  int getMaxUserId() throws InternalServerException {
         try {
-            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from customers");
+            PreparedStatement getItemQuery = connect.prepareStatement("select max(Uid) from customers");
             ResultSet result = getItemQuery.executeQuery();
             result.first();
             return result.getInt(1);
@@ -300,14 +289,14 @@ public class DatabaseAccess {
     }
     public void addNewDeliveryBoy(DeliveryBoy Dboy) throws InternalServerException {
         try {
-            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id, branch) VALUES (?, ?, ?, ?, ?, ?)");
-            insertItem.setInt(1, Dboy.getId());
-            insertItem.setString(2, Dboy.getName());
-            insertItem.setString(3, Dboy.getEmail());
-            insertItem.setString(4, Dboy.getPassword());
-            insertItem.setInt(5, 0);
-            insertItem.setString(6, Dboy.getBranch());
-            insertItem.executeUpdate();
+            PreparedStatement insertDeliveryBoy = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id, branch) VALUES (?, ?, ?, ?, ?, ?)");
+            insertDeliveryBoy.setInt(1, Dboy.getId());
+            insertDeliveryBoy.setString(2, Dboy.getName());
+            insertDeliveryBoy.setString(3, Dboy.getEmail());
+            insertDeliveryBoy.setString(4, Dboy.getPassword());
+            insertDeliveryBoy.setInt(5, 0);
+            insertDeliveryBoy.setString(6, Dboy.getBranch());
+            insertDeliveryBoy.executeUpdate();
             System.out.println("the process done successfully");
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -317,9 +306,8 @@ public class DatabaseAccess {
         try{
             PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM deliveryBoy ");
             ResultSet result = loginQuery.executeQuery();
-            System.out.println("id  " + "name                   email");
             while(result.next()){
-                System.out.println(result.getInt("id") +"   "+ result.getString("name")+ "         " +result.getString("email")+ "   ");
+                System.out.println("id: "+result.getInt("id") +"     "+ "name: "+result.getString("name")+ "       email: " +result.getString("email"));
             }
         }catch(SQLException e){
             throw  new InternalServerException();
@@ -339,15 +327,16 @@ public class DatabaseAccess {
     }
     public void updateDeliveryBoy(int id, DeliveryBoy DBoy) throws InternalServerException {
         try {
-            PreparedStatement updateDBoy = connect.prepareStatement("update deliveryBoy set order_id=?, name=?, email=?, password=?, branch=?, vehicleType=? where id=?");
+            PreparedStatement updateDBoy = connect.prepareStatement("update deliveryBoy set order_id=?, name=?, email=?, password=?, branch=?, weekWorkHours=?, vehicleType=? where id=?");
             updateDBoy.setInt(1, DBoy.getOrderId());
             updateDBoy.setString(2, DBoy.getName());
             updateDBoy.setString(3, DBoy.getEmail());
             updateDBoy.setString(4, DBoy.getPassword());
             updateDBoy.setString(5, DBoy.getBranch());
-            updateDBoy.setString(6, DBoy.getVehicleType());
-            updateDBoy.setInt(7, DBoy.getId());
-            ResultSet result = updateDBoy.executeQuery();
+            updateDBoy.setFloat(6, DBoy.getWeekWorkHours());
+            updateDBoy.setString(7, DBoy.getVehicleType());
+            updateDBoy.setInt(8,id);
+            updateDBoy.executeUpdate();
 
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -364,7 +353,7 @@ public class DatabaseAccess {
             String password=result.getString("password");
             String branch=result.getString("branch");
             String Vtype=result.getString("vehicleType");
-            int weekWorkHours=result.getInt("weekWorkHours");
+            float weekWorkHours=result.getFloat("weekWorkHours");
 
             System.out.println("name:"+name);
             System.out.println("email:"+email);
