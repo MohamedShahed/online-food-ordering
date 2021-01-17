@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Order {
-    private int id;
+    private DatabaseAccess db=new DatabaseAccess();
+    private int id=db.getMaxId("orders");
     private int customer_id;
     private ArrayList<Integer> orderList;
     private String duration;
@@ -14,18 +15,21 @@ public class Order {
     private Scanner sc=new Scanner(System.in);
 
 
-    public Order(){
+    public Order() throws Exception {
         System.out.println("enter the payment type :");this.setPaymentType(sc.next());
         System.out.println("do u have any notes ? if yes enter y else enter n");
         String input=sc.next();
         if(input.contains("y")){
-            System.out.println("enter ur notes: ");setCustomerNotes(sc.next());
+            System.out.println("enter ur notes: ");sc.nextLine();
+            setCustomerNotes(sc.nextLine());
         }
+        id++;
 
     }
     public int getId() {
         return this.id;
     }
+    public float getTotalPrice(){return this.totalPrice;}
     public void setCustomer_id(int id){this.customer_id=id;}
     public void setItems(ArrayList<Item> items){
         orderList=new ArrayList<>(0);

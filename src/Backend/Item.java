@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Item {
     private DatabaseAccess db=new DatabaseAccess();
-    private int id=db.getMaxItemId();
+    private int id=db.getMaxId("items");
     private float price;
     private int quantity;
     private String title;

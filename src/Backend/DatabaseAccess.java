@@ -33,7 +33,7 @@ public class DatabaseAccess {
 
     private boolean userExists(String username) throws InternalServerException {
         try {
-            PreparedStatement checkUser = connect.prepareStatement("SELECT COUNT(*) AS TOTAL FROM online_food_ordering.customers WHERE Uname=?;");
+            PreparedStatement checkUser = connect.prepareStatement("SELECT COUNT(*) AS TOTAL FROM online_food_ordering.customers WHERE name=?;");
             checkUser.setString(1, username);
             ResultSet resultSet = checkUser.executeQuery();
 
@@ -50,15 +50,14 @@ public class DatabaseAccess {
         }
 
         try {
-            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (Uid,Uname, Uemail, password, Uaddress, UphoneNumber) VALUES (?, ?, ?, ?, ?)");
+            PreparedStatement insertUser = connect.prepareStatement("INSERT INTO customers (id, name, email, password, address, phoneNumber) VALUES (?, ?, ?, ?, ?,?)");
             insertUser.setInt(1, customer.getId());
             insertUser.setString(2, customer.getName());
             insertUser.setString(3, customer.getEmail());
             insertUser.setString(4, customer.getPassword());
-            insertUser.setString(4, customer.getAddress());
-            insertUser.setString(5, customer.getPhoneNumber());
+            insertUser.setString(5, customer.getAddress());
+            insertUser.setString(6, customer.getPhoneNumber());
             insertUser.executeUpdate();
-
             return true;
         } catch (SQLException e) {
             throw new InternalServerException();
@@ -70,18 +69,18 @@ public class DatabaseAccess {
         }
 
         try {
-            PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM customers WHERE Uname=?");
+            PreparedStatement loginQuery = connect.prepareStatement("SELECT * FROM customers WHERE name=?");
             loginQuery.setString(1, username);
             ResultSet result = loginQuery.executeQuery();
             result.first();
             String dbPassword = result.getString("password");
-            String email = result.getString("Uemail");
-            String Pnumber=result.getString("UphoneNumber");
-            String address=result.getString("Uaddress");
-            int id=result.getInt("Uid");
+            String email = result.getString("email");
+            String PhoneNumber=result.getString("phoneNumber");
+            String address=result.getString("address");
+            int id=result.getInt("id");
 
             if (dbPassword.equals(pass)) {
-                return new Customer(id, username, email,address, Pnumber);
+                return new Customer(id, username, email,address, PhoneNumber);
             } else {
                 throw new WrongCredentialsException();
             }
@@ -160,7 +159,7 @@ public class DatabaseAccess {
             while(result.next()){
                 quantity=result.getInt("quantity");
                 if(quantity>0)
-                    System.out.println("id: "+result.getInt("id") +"   title:"+ result.getString("title")+ "   price: " +result.getFloat("price")+ "   quantity"+quantity+"    description  "+result.getString("description"));
+                    System.out.println("id: "+result.getInt("id") +"   title:"+ result.getString("title")+ "   price: " +result.getFloat("price")+ "   quantity: "+quantity+"    description  "+result.getString("description"));
             }
         }catch(SQLException e){
             throw  new InternalServerException();
@@ -185,8 +184,8 @@ public class DatabaseAccess {
             PreparedStatement Query = connect.prepareStatement("SELECT * FROM items where id=?");
             Query.setInt(1, id);
             ResultSet result = Query.executeQuery();
-            int preQuantity=result.getInt("quantity");
-            updateItem(id, new Item(result.getString("title"),result.getFloat("price"),preQuantity-q, result.getString("description")));
+            int OldQuantity=result.getInt("quantity");
+            updateItemQuantity(id, OldQuantity-q);
             return new Item(result.getString("title"), result.getFloat("price"),q,result.getString("description"));
         }catch(SQLException e){
             throw  new Exception();
@@ -216,6 +215,17 @@ public class DatabaseAccess {
             throw new InternalServerException();
         }
     }
+    public void updateItemQuantity(int id, int q) throws InternalServerException {
+        try {
+            PreparedStatement updateItem = connect.prepareStatement("update items set quantity=? where id=?");
+            updateItem.setInt(1,id);
+            updateItem.setInt(2, q);
+            updateItem.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new InternalServerException();
+        }
+    }
 
     public void viewItem(int id) throws InternalServerException{
         try {
@@ -239,33 +249,25 @@ public class DatabaseAccess {
     }
     public void creatOrder(Order order)throws  InternalServerException{
         try {
-            PreparedStatement insertItem = connect.prepareStatement("INSERT INTO orders (id, customer_id, duration, customerNotes, PaymentType, total_price,items) VALUES (?, ?, ?, ?, ?, ?)");
-            insertItem.setInt(1, order.getId());
-            insertItem.setInt(2, order.getCustomer_id());
-            insertItem.setString(3, order.getDuration());
-            insertItem.setString(4, order.getCustomerNotes());
-            insertItem.setString(5, order.getPaymentType());
-            insertItem.setString(6, order.getOrderList());
-            insertItem.executeUpdate();
+            PreparedStatement insertOrder = connect.prepareStatement("INSERT INTO orders (id, customer_id, duration, customerNotes, PaymentType, total_price,items) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            insertOrder.setInt(1, order.getId());
+            insertOrder.setInt(2, order.getCustomer_id());
+            insertOrder.setString(3, order.getDuration());
+            insertOrder.setString(4, order.getCustomerNotes());
+            insertOrder.setString(5, order.getPaymentType());
+            insertOrder.setFloat(6, order.getTotalPrice());
+            insertOrder.setString(7, order.getOrderList());
+            insertOrder.executeUpdate();
+            System.out.println("thank you ... ur order will arrived very soon ");
+
 
         } catch (SQLException e) {
             throw new InternalServerException();
         }
     }
-    public  int getMaxItemId() throws InternalServerException {
+    public  int getMaxId(String tableName) throws InternalServerException {
         try {
-            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from items");
-            ResultSet result = getItemQuery.executeQuery();
-            result.first();
-            return result.getInt(1);
-
-        } catch (SQLException e) {
-            throw new InternalServerException();
-        }
-    }
-    public  int getMaxUserId() throws InternalServerException {
-        try {
-            PreparedStatement getItemQuery = connect.prepareStatement("select max(Uid) from customers");
+            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from "+tableName);
             ResultSet result = getItemQuery.executeQuery();
             result.first();
             return result.getInt(1);
@@ -276,17 +278,6 @@ public class DatabaseAccess {
     }
 
     /***Dboy***/
-    public  int getMaxDeliveryBoyId() throws InternalServerException {
-        try {
-            PreparedStatement getItemQuery = connect.prepareStatement("select max(id) from deliveryBoy");
-            ResultSet result = getItemQuery.executeQuery();
-            result.first();
-            return result.getInt(1);
-
-        } catch (SQLException e) {
-            throw new InternalServerException();
-        }
-    }
     public void addNewDeliveryBoy(DeliveryBoy Dboy) throws InternalServerException {
         try {
             PreparedStatement insertDeliveryBoy = connect.prepareStatement("INSERT INTO deliveryBoy (id, name, email, password, order_id, branch) VALUES (?, ?, ?, ?, ?, ?)");

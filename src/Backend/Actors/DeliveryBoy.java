@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class DeliveryBoy extends Person {
     private DatabaseAccess db=new DatabaseAccess();
-    private int id=db.getMaxDeliveryBoyId();
+    private int id=db.getMaxId("deliveryBoy");
 
     //todo adding them using admin
     private String branch;
@@ -15,6 +15,7 @@ public class DeliveryBoy extends Person {
     private String vehicleType;
     private float weekWorkHours;
     private static Scanner sc=new Scanner(System.in);
+    private boolean status=false;
 
     private int OrderId;
 

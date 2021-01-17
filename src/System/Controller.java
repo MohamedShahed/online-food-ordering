@@ -100,14 +100,15 @@ public class Controller {
                         }
                         else if(customerChoice==2) /**2 for make order*/
                         {
-                            db.showAllItems();
                             String input;
                             int id, quantity;
                             while(true){
+                                db.showAllItems();
                                 System.out.println("to add to ur cart enter y else enter E");input=sc.next();
                                 if(input.equals("y")){
                                     System.out.println("enter product id and the quantity u need ");
-                                    id=sc.nextInt();quantity=sc.nextInt();
+                                    id=sc.nextInt();
+                                    quantity=sc.nextInt();
                                     customer.addToCart(id, quantity);
                                 }
                                 else {

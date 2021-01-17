@@ -19,7 +19,7 @@ public class Customer extends Person {
     private DatabaseAccess db=new DatabaseAccess();;
 
 
-    private int id=db.getMaxUserId();
+    private int id=db.getMaxId("customers");
 
     public Customer(int id, String name, String email,String address, String phoneNumber) throws Exception {
         super(name, email);
@@ -36,12 +36,14 @@ public class Customer extends Person {
 
     public void addToCart(int itemId, int quantity) throws Exception {
         cart.add(db.getBuyedItem(itemId, quantity));
+        System.out.println("the item has been added into ur cart ");
     }
     public void creatOrder(Order order) throws InternalServerException {
         order.setCustomer_id(this.getId());
         order.setTotalPrice(getTotalPrice());
         order.setDuration("30 M");
         order.setItems(cart);
+        order.setTotalPrice(getTotalPrice());
         db.creatOrder(order);
     }
 
